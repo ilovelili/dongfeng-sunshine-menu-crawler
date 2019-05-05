@@ -7,8 +7,7 @@ const casper = require('casper').create({
         loadPlugins: false
     }
 }),
-    config = require('config.json'),
-    target_date = config['target_date'] || formatDate(),
+    config = require('config.json'),    
     url = config['url'],
     menu_url = config['menu_url'],
     username = config['username'],
@@ -28,7 +27,7 @@ casper.start(url, function login() {
 });
 
 casper.then(function open() {
-    this.echo(`step 2. download`);
+    this.echo('step 2. download');
     this.waitForText('日常管理', function () {        
         this.thenOpen(menu_url, function () {
             this.waitForText('一周菜谱', function() {

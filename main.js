@@ -31,7 +31,7 @@ casper.then(function open() {
     this.waitForText('日常管理', function () {        
         this.thenOpen(menu_url, function () {
             this.waitForText('一周菜谱', function() {
-                let header = this.evaluate(function() {
+                var header = this.evaluate(function() {
                     return __utils__.findOne('table tr:nth-child(1)').innerHTML.replace(/\s/g,'');
                 }),
                 senior_breakfast = this.evaluate(function() {
@@ -53,7 +53,7 @@ casper.then(function open() {
                     return __utils__.findOne('table tr:nth-child(7)').innerHTML.replace(/\s/g,'');
                 });
 
-                let header_line = parseHeader(header),
+                var header_line = parseHeader(header),
                     senior_breakfast_line = parseMenu(senior_breakfast),
                     senior_lunch_line = parseMenu(senior_lunch),
                     senior_snack_line = parseMenu(senior_snack),
@@ -96,11 +96,11 @@ casper.on('run.complete', function () {
 
 // ------------------------ helpers ------------------------
 function formatDate(date) {
-    let d = new Date(date);
+    var d = new Date(date);
     if (date instanceof Date) {
         d = new Date(date);
     }
-    let month = '' + (d.getMonth() + 1),
+    var month = '' + (d.getMonth() + 1),
         day = '' + d.getDate();        
 
     if (month.length < 2) month = '0' + month;
@@ -112,7 +112,7 @@ function formatDate(date) {
 // parse header line
 function parseHeader(header) {
     const headerline_regex_pattern = /<th>菜单名称<\/th><th>餐别<\/th><th>星期一<span>(\d{2}-\d{2})<\/span><\/th><th>星期二<span>(\d{2}-\d{2})<\/span><\/th><th>星期三<span>(\d{2}-\d{2})<\/span><\/th><th>星期四<span>(\d{2}-\d{2})<\/span><\/th><th>星期五<span>(\d{2}-\d{2})<\/span><\/th>/;
-    let matches = header.match(headerline_regex_pattern);
+    var matches = header.match(headerline_regex_pattern);
     if (matches.length != 6) {
         return "";
     }
@@ -125,7 +125,7 @@ function parseHeader(header) {
 // parse menu line
 function parseMenu(menu) {    
     const menuline_regex_pattern = /^.*(<td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td>).*$/;
-    let matches = menu.match(menuline_regex_pattern);
+    var matches = menu.match(menuline_regex_pattern);
     if (matches.length != 9) {
         return "";
     }

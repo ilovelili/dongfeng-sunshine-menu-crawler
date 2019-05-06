@@ -1,4 +1,4 @@
-const casper = require('casper').create({
+var casper = require('casper').create({
     waitTimeout: 5000, // 5s
     verbose: true,
     logLevel: 'error',
@@ -7,13 +7,14 @@ const casper = require('casper').create({
         loadPlugins: false
     }
     }),
-    fs = require('fs'),
-    config_file = fs.read('config.json'),
-    config = JSON.parse(config_file),
+    fs = require('fs'),    
+    config = require('config.json'),
     url = config['url'],
     menu_url = config['menu_url'],
     username = config['username'],
     password = config['password'];
+
+console.log(config_file);
 
 casper.userAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36');
 

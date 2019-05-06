@@ -6,13 +6,14 @@ const casper = require('casper').create({
         loadImages: false,
         loadPlugins: false
     }
-}),
-    config = require('config.json'),    
+    }),
+    fs = require('fs'),
+    config_file = fs.read('config.json'),
+    config = JSON.parse(config_file),
     url = config['url'],
     menu_url = config['menu_url'],
     username = config['username'],
-    password = config['password'],
-    fs = require('fs');
+    password = config['password'];
 
 casper.userAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36');
 
@@ -28,30 +29,30 @@ casper.start(url, function login() {
 
 casper.then(function open() {
     this.echo('step 2. download');
-    this.waitForText('日常管理', function () {        
+    this.waitForText('日常管理', function () {
         this.thenOpen(menu_url, function () {
-            this.waitForText('一周菜谱', function() {
-                var header = this.evaluate(function() {
-                    return __utils__.findOne('table tr:nth-child(1)').innerHTML.replace(/\s/g,'');
+            this.waitForText('一周菜谱', function () {
+                var header = this.evaluate(function () {
+                    return __utils__.findOne('table tr:nth-child(1)').innerHTML.replace(/\s/g, '');
                 }),
-                senior_breakfast = this.evaluate(function() {
-                    return __utils__.findOne('table tr:nth-child(2)').innerHTML.replace(/\s/g,'');
-                }),
-                senior_lunch = this.evaluate(function() {
-                    return __utils__.findOne('table tr:nth-child(3)').innerHTML.replace(/\s/g,'');
-                }),
-                senior_snack = this.evaluate(function() {
-                    return __utils__.findOne('table tr:nth-child(4)').innerHTML.replace(/\s/g,'');
-                }),
-                junior_breakfast = this.evaluate(function() {
-                    return __utils__.findOne('table tr:nth-child(5)').innerHTML.replace(/\s/g,'');
-                }),
-                junior_lunch = this.evaluate(function() {
-                    return __utils__.findOne('table tr:nth-child(6)').innerHTML.replace(/\s/g,'');
-                }),
-                junior_snack = this.evaluate(function() {
-                    return __utils__.findOne('table tr:nth-child(7)').innerHTML.replace(/\s/g,'');
-                });
+                    senior_breakfast = this.evaluate(function () {
+                        return __utils__.findOne('table tr:nth-child(2)').innerHTML.replace(/\s/g, '');
+                    }),
+                    senior_lunch = this.evaluate(function () {
+                        return __utils__.findOne('table tr:nth-child(3)').innerHTML.replace(/\s/g, '');
+                    }),
+                    senior_snack = this.evaluate(function () {
+                        return __utils__.findOne('table tr:nth-child(4)').innerHTML.replace(/\s/g, '');
+                    }),
+                    junior_breakfast = this.evaluate(function () {
+                        return __utils__.findOne('table tr:nth-child(5)').innerHTML.replace(/\s/g, '');
+                    }),
+                    junior_lunch = this.evaluate(function () {
+                        return __utils__.findOne('table tr:nth-child(6)').innerHTML.replace(/\s/g, '');
+                    }),
+                    junior_snack = this.evaluate(function () {
+                        return __utils__.findOne('table tr:nth-child(7)').innerHTML.replace(/\s/g, '');
+                    });
 
                 var header_line = parseHeader(header),
                     senior_breakfast_line = parseMenu(senior_breakfast),
@@ -61,13 +62,13 @@ casper.then(function open() {
                     junior_lunch_line = parseMenu(junior_lunch),
                     junior_snack_line = parseMenu(junior_snack);
 
-                const output = header_line + '\r\n' + 
-                        senior_breakfast_line + '\r\n' + 
-                        senior_lunch_line + '\r\n' + 
-                        senior_snack_line + '\r\n' + 
-                        junior_breakfast_line + '\r\n' + 
-                        junior_lunch_line + '\r\n' + 
-                        junior_snack_line;
+                const output = header_line + '\r\n' +
+                    senior_breakfast_line + '\r\n' +
+                    senior_lunch_line + '\r\n' +
+                    senior_snack_line + '\r\n' +
+                    junior_breakfast_line + '\r\n' +
+                    junior_lunch_line + '\r\n' +
+                    junior_snack_line;
 
                 if (output.length > 0) {
                     // workingDirectory is defined by phantomjs, use process.cwd() in nodejs
@@ -101,7 +102,7 @@ function formatDate(date) {
         d = new Date(date);
     }
     var month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate();        
+        day = '' + d.getDate();
 
     if (month.length < 2) month = '0' + month;
     if (day.length < 2) day = '0' + day;
@@ -118,12 +119,12 @@ function parseHeader(header) {
     }
 
     // remove first element and join
-    matches.shift();    
+    matches.shift();
     return matches.join(",");
 }
 
 // parse menu line
-function parseMenu(menu) {    
+function parseMenu(menu) {
     const menuline_regex_pattern = /^.*(<td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td>).*$/;
     var matches = menu.match(menuline_regex_pattern);
     if (matches.length != 9) {
@@ -136,7 +137,7 @@ function parseMenu(menu) {
     matches.pop();
     matches.pop();
 
-    return matches.map(function(item) {
+    return matches.map(function (item) {
         item = item.replace(/<br>/g, "|");
         if (item.charAt(0) == '|') {
             item = item.substr(1);

@@ -124,6 +124,7 @@ function parseHeader(header) {
 
 // parse menu line
 function parseMenu(menu) {
+    if (!menu) return;
     const menuline_regex_pattern = /^.*(<td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td><td><span>(.+)<\/span><\/td>).*$/;
     var matches = menu.match(menuline_regex_pattern);
     if (matches.length != 9) {
